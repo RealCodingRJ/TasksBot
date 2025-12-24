@@ -10,7 +10,10 @@ import java.io.IO
 
 import java.time.LocalDate
 
+
 class MessageListener : ListenerAdapter() {
+
+    val msg = Message("It's Christmas Time")
 
     override fun onMessageReceived(message: MessageReceivedEvent) {
 
@@ -24,7 +27,7 @@ class MessageListener : ListenerAdapter() {
 
             if (LocalDate.now().monthValue == 12 && LocalDate.now().dayOfMonth == 25) {
 
-                channelSender.sendMessage("It's Christmas Time").queue()
+                channelSender.sendMessage(msg.command).queue()
             }
 
         } catch (e: Exception) {
@@ -35,11 +38,23 @@ class MessageListener : ListenerAdapter() {
 
 fun main() {
 
-    val client: JDA = JDABuilder.createDefault("")
-        .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-        .disableCache(CacheFlag.VOICE_STATE)
-        .setActivity(Activity.playing("I am Funny"))
-        .build()
+    val message = Message("I am a Coder Bot")
 
-    client.addEventListener(MessageListener())
+    val command = listOf(
+        Message(command = "I am a Coder Bot")
+    )
+    val isCommand = command.maxBy {
+        it.command.length > 1
+    }
+
+    if (!isCommand.component1().toBooleanStrict()) {
+
+        val client: JDA = JDABuilder.createDefault("")
+            .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+            .disableCache(CacheFlag.VOICE_STATE)
+            .setActivity(Activity.playing(message.command))
+            .build()
+
+        client.addEventListener(MessageListener())
+    }
 }
